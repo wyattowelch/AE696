@@ -1,0 +1,5 @@
+# Untracked files:
+# Ignore virtual environment
+venv/
+.venv/
+env/
