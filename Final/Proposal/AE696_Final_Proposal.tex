@@ -1,0 +1,116 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{hyperref}
+% Article handout: reuse SDSU colors without loading the Beamer-only theme.
+\definecolor{SDSUDarkRed}{HTML}{A6192E}
+\hypersetup{colorlinks=true,urlcolor=SDSUDarkRed,linkcolor=SDSUDarkRed,
+  pdftitle={AE 696 Project Proposal Template},pdfauthor={Dr. Jun Chen}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlist[itemize]{leftmargin=1.35em,itemsep=2pt,topsep=3pt,parsep=0pt}
+\titleformat{\section}{\normalsize\bfseries}{}{0pt}{}
+\titlespacing*{\section}{0pt}{9pt}{3pt}
+\newcommand{\prompt}[1]{{\itshape #1}}
+\begin{document}
+
+\begin{center}
+{\large\bfseries\color{SDSUDarkRed} AE 696 Project Proposal}\\[3pt]
+Reinforcement Learning with AI Applications in Engineering\\
+Dr. Jun Chen \quad | \quad Fall 2026
+\end{center}
+
+\textbf{Purpose.} Propose a feasible engineering application of reinforcement
+learning. Define the problem, a preliminary RL formulation, and a measurable
+experimental plan. No code or preliminary results are required at this stage.
+
+\textbf{Submission.} Work individually or in a team of two. Submit one PDF per
+project on Canvas by the posted Week 9 deadline. Use 1 to 2 pages for the proposal
+body, excluding references, with 11 pt or larger text and 1 inch margins.
+
+\textbf{Using this template.} Replace the italic prompts with your responses;
+delete these opening instructions from your submission. Keep the numbered
+headings. Short paragraphs or bullet points are acceptable. Algorithm and reward
+choices may be preliminary, but must be specific enough to assess feasibility.
+
+\textbf{Project title:} \prompt{[Title]}\\
+\textbf{Student name(s) and SDSU email(s):} \prompt{[Name and email for each member]}
+
+\section*{1. Engineering Problem and Objective}
+\prompt{Describe the system, the task, and the engineering objective in a short
+paragraph. Explain why learning through sequential interaction is useful here.
+Identify what you will contribute, such as a task modification, reward design,
+controller comparison, or robustness study. An existing simulator or algorithm
+is acceptable; merely reproducing a tutorial is not a sufficient project.}
+
+\section*{2. Preliminary MDP or POMDP Formulation}
+\prompt{Specify each item below. Give variables, dimensions, units, or bounds
+where applicable; identify any details that remain to be determined.}
+\begin{itemize}
+  \item \textbf{State and observation:} \prompt{What describes the system, and
+  what information does the agent actually receive? If partially observable,
+  state whether you will use history, memory, or state estimation.}
+  \item \textbf{Action:} \prompt{What does the agent command? Specify discrete
+  choices or continuous dimensions and bounds.}
+  \item \textbf{Reward:} \prompt{Give a preliminary equation or an explicit list
+  of reward terms, signs, and intended effects. List safety constraints separately.}
+  \item \textbf{Dynamics and episodes:} \prompt{Identify the simulator or transition
+  process and whether its model is available to the algorithm. Specify initial
+  conditions, success/failure termination, time limit, and discount factor.}
+\end{itemize}
+
+\section*{3. Method and Implementation Plan}
+\prompt{Name the initial RL algorithm and explain its suitability for the action
+space and task. Name at least one comparison baseline, such as a random policy,
+heuristic, classical controller, or another RL method. Identify the environment,
+software libraries, available computing resources, and any data needed. Distinguish
+existing code you will reuse from the components you will develop or modify.}
+
+\section*{4. Evaluation Plan}
+\prompt{Describe the planned experiments, not predicted numerical outcomes.}
+\begin{itemize}
+  \item \textbf{Metrics:} \prompt{Specify at least two quantitative metrics,
+  including one tied to the engineering objective, such as success rate, tracking
+  error, control effort, or constraint violations. Define how each is measured.}
+  \item \textbf{Protocol:} \prompt{Specify the training budget, number of independent
+  training seeds, and evaluation episodes per trained policy. A suggested starting
+  point is 3 training seeds and 20 evaluation episodes per seed; explain a smaller
+  plan if computing limits require it. Evaluate frozen policies without learning.}
+  \item \textbf{Comparison and outputs:} \prompt{Use the same test conditions and
+  metrics for the RL policy and baseline. State how results will be summarized,
+  including variability across training runs. Name the planned plots or tables
+  and a measurable target or hypothesis to test; improved performance is not
+  guaranteed or required.}
+\end{itemize}
+
+\section*{5. Milestones, Responsibilities, and Backup Plan}
+\prompt{Give target weeks or dates for environment setup and baseline testing,
+initial RL training, main experiments, and final analysis. Use the Canvas schedule
+for the progress check-in, presentation, and report deadlines. For teams, assign
+specific responsibilities to each member. Identify the main technical risk and
+a simpler backup that preserves a meaningful RL experiment.}
+
+\section*{6. References and Disclosure}
+\prompt{Cite the papers, software, environments, and tutorials you plan to use.
+Give enough information or links to locate them. Disclose any substantial
+AI-generated proposal text or code, as required by the course policy. All members
+must understand and be able to explain the submitted work.}
+
+\section*{Submission Check}
+\prompt{Delete this checklist before submission. Confirm that all six sections
+are completed; states, observations, actions, rewards, and episode definitions are
+specified; a baseline and at least two metrics are named; the experiment budget,
+milestones, responsibilities, and backup plan are stated; and sources and any
+substantial AI assistance are acknowledged. Check the PDF for readability and
+the proposal body for the page limit.}
+
+\textbf{Instructor review.} Proposals will be reviewed for completeness,
+technical consistency, feasible scope, and a testable evaluation plan.
+Instructor feedback may require revisions before the project scope is approved.
+
+\end{document}
