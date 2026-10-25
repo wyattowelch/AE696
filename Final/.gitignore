@@ -1,0 +1,10 @@
+# Untracked files:
+# Ignore virtual environment
+venv/
+.venv/
+env/
+src2/
+*.pyc
+__pycache__/
+*.csv
+*.png
