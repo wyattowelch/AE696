@@ -27,6 +27,7 @@ from results.plots import (
     plot_orbital_element_changes,
     plot_trajectories_3d,
 )
+from orbit_control import OrbitControlConfig, propagate_with_orbit_control
 
 
 # Knobs and Switches
@@ -35,10 +36,25 @@ SCRIPT_NAME = "simulation_template"
 
 
 # Time switches:
-RUN_DURATION_S = 86_400 * 100
+RUN_DURATION_S = 86_400 * 1
 # 86_400 = 1 day [s]
 OUTPUT_INTERVAL_S = 900
 # 900 = 15 minutes [s]
+
+# Orbit control switch: when enabled, propagation is split into windows so
+# orbital events can be checked and a policy can maneuver at those events.
+ORBIT_CONTROL_ENABLED = True
+CONTROL_CHECK_INTERVAL_S = OUTPUT_INTERVAL_S
+ORBIT_EVENTS = ("ascending_node", "descending_node", "apogee", "perigee")
+CONTROL_POLICY = None # TBD
+VERBOSE = False
+# Policy actions are discrete delta-v choices in the local RTN frame [m/s].
+# Keep a zero-action entry so a policy can choose to coast.
+MANEUVER_ACTIONS_RTN_M_S = (
+    (0.0, 0.0, 0.0),
+    (0.0, 0.01, 0.0),
+    (0.0, -0.01, 0.0),
+)
 
 
 # Force switches:
@@ -286,10 +302,26 @@ def run_simulation() -> None:
             )
 
         # Run Propagation
-        states, elements = propagate(
-            init_state,
-            config.dt_End, 
-            config=config
+        if ORBIT_CONTROL_ENABLED:
+            states, elements, event_log = propagate_with_orbit_control(
+                init_state,
+                config.dt_End,
+                config,
+                OrbitControlConfig(
+                    enabled=True,
+                    check_interval_s=CONTROL_CHECK_INTERVAL_S,
+                    events=ORBIT_EVENTS,
+                    actions_rtn_m_s=MANEUVER_ACTIONS_RTN_M_S,
+                    policy=CONTROL_POLICY,
+                    verbose=VERBOSE,
+                ),
+            )
+            print(f"Orbit-control events for {config.sat_id}: {len(event_log)}")
+        else:
+            states, elements = propagate(
+                init_state,
+                config.dt_End,
+                config=config
             )
 
         all_states[config.sat_id] = states
