@@ -12,10 +12,10 @@ import math
 import csv
 from pathlib import Path
 
-from state import elements_to_state
-from propagator import propagate
-from scenario import external_forces
-from scenario import (
+from src.state import elements_to_state
+from src.propagator import propagate
+from src.scenario import external_forces
+from src.scenario import (
     EARTH,
     OrbitConfig, 
     RunConfig, 
@@ -27,7 +27,8 @@ from results.plots import (
     plot_orbital_element_changes,
     plot_trajectories_3d,
 )
-from orbit_control import OrbitControlConfig, propagate_with_orbit_control
+from src.orbit_control import OrbitControlConfig, propagate_with_orbit_control
+from results.event_logs import write_satellite_event_log
 
 
 # Knobs and Switches
@@ -47,7 +48,6 @@ ORBIT_CONTROL_ENABLED = True
 CONTROL_CHECK_INTERVAL_S = OUTPUT_INTERVAL_S
 ORBIT_EVENTS = ("ascending_node", "descending_node", "apogee", "perigee")
 CONTROL_POLICY = None # TBD
-VERBOSE = False
 # Policy actions are discrete delta-v choices in the local RTN frame [m/s].
 # Keep a zero-action entry so a policy can choose to coast.
 MANEUVER_ACTIONS_RTN_M_S = (
@@ -313,16 +313,24 @@ def run_simulation() -> None:
                     events=ORBIT_EVENTS,
                     actions_rtn_m_s=MANEUVER_ACTIONS_RTN_M_S,
                     policy=CONTROL_POLICY,
-                    verbose=VERBOSE,
                 ),
             )
-            print(f"Orbit-control events for {config.sat_id}: {len(event_log)}")
         else:
             states, elements = propagate(
                 init_state,
                 config.dt_End,
                 config=config
             )
+            event_log = []
+
+        write_satellite_event_log(
+            SCRIPT_NAME,
+            config.sat_id,
+            event_log,
+            control_enabled=ORBIT_CONTROL_ENABLED,
+            states=states,
+            events=ORBIT_EVENTS,
+        )
 
         all_states[config.sat_id] = states
         all_elements[config.sat_id] = elements

@@ -6,10 +6,12 @@ from dataclasses import dataclass
 import numpy as np
 import satkit as sk
 import logging
+import math
 
 from propagator import propagate
 from scenario import EARTH, RunConfig
 from state import State
+from orbit_bounding import find_ideal_events
 
 
 logger = logging.getLogger(__name__)
@@ -29,7 +31,6 @@ class OrbitControlConfig:
     events: tuple[str, ...] = ("ascending_node", "descending_node", "apogee", "perigee")
     actions_rtn_m_s: tuple[tuple[float, float, float], ...] = ((0.0, 0.0, 0.0),)
     policy: object | None = None
-    verbose: bool = False
 
 
 def _event_value(state: State, event_name: str) -> float:
@@ -144,6 +145,10 @@ def propagate_with_orbit_control(
     event_log = []
     last_event_time = {}
     current = initial_state
+
+    # Calculate optimal event positions
+    ideals = find_ideal_events(initial_state, control_config)
+
     while current.t < end_time_s:
         window_end = min(current.t + control_config.check_interval_s, end_time_s)
         try:
@@ -157,6 +162,7 @@ def propagate_with_orbit_control(
                 window_end,
             )
             raise
+
         event_hit = None
         # Find the earliest event in this window, then restart propagation at
         # its interpolated state so no already-computed future state survives.
@@ -183,26 +189,26 @@ def propagate_with_orbit_control(
         states.extend(state for state in window_states[1:] if state.t < event_state.t)
         if not states or states[-1].t != event_state.t:
             states.append(event_state) # append final if none/if times dont line up
+
+        # Compare satellite state vs optimal position, compare it to box.
+
+        # Apply Policy Action
         action_index = _policy_action(control_config, event_name, event_state)
         if not 0 <= action_index < len(control_config.actions_rtn_m_s):
             raise ValueError(f"Policy action {action_index} is outside the configured action list")
         delta_v = control_config.actions_rtn_m_s[action_index]
+        ideal_r, ideal_v = ideals[event_name]
         current = _apply_rtn_delta_v(event_state, delta_v)
-        if control_config.verbose:
-            logger.warning(
-                "Orbit event: sat=%s event=%s t=%.6f s action=%d delta_v_rtn_m_s=%s",
-                run_config.sat_id,
-                event_name,
-                event_state.t,
-                action_index,
-                tuple(delta_v),
-            )
         # Replace the event sample with its post-maneuver velocity so saved
         # history and all continuing propagation use the commanded velocity.
         states[-1] = current
         event_log.append({
             "event": event_name,
             "time_s": event_state.t,
+            "ideal_r_gcrf_m": ideal_r.copy(),
+            "ideal_v_gcrf_m_s": ideal_v.copy(),
+            "position_error_gcrf_m": event_state.r - ideal_r,
+            "velocity_error_gcrf_m_s": event_state.v - ideal_v,
             "action_index": action_index,
             "delta_v_rtn_m_s": tuple(delta_v),
             "pre_maneuver_state": event_state,
