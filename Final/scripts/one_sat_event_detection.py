@@ -57,17 +57,17 @@ MANEUVER_ACTIONS_RTN_M_S = (
 )
 
 
-box_difficulty = 0
+BOX_DIFFICULTY = 0
     # 0 - easy      +/- [4, 4, 4] (km)
     # 1 - medium    +/- [2, 2, 2] (km)
     # 2 - hard      +/- [1, 1, 1] (km)
 
-if box_difficulty == 0:
-    B = 4.0
-elif box_difficulty == 1:
-    B = 2.0
-elif box_difficulty == 2:
-    B = 1.0
+if BOX_DIFFICULTY == 0:
+    BOX_SHAPE = 4.0
+elif BOX_DIFFICULTY == 1:
+    BOX_SHAPE = 2.0
+elif BOX_DIFFICULTY == 2:
+    BOX_SHAPE = 1.0
 else:
     raise ValueError("Incorrect box difficulty.")
 # TODO: May need to change maneuver sizes for hard mode to make it possible.
@@ -304,6 +304,7 @@ def run_simulation() -> None:
                     events=ORBIT_EVENTS,
                     actions_rtn_m_s=MANEUVER_ACTIONS_RTN_M_S,
                     policy=CONTROL_POLICY,
+                    box_shape=BOX_SHAPE,
                 ),
             )
         else:
@@ -322,6 +323,7 @@ def run_simulation() -> None:
             states=states,
             events=ORBIT_EVENTS,
         )
+        print("Logs written.")
 
         all_states[config.sat_id] = states
         all_elements[config.sat_id] = elements

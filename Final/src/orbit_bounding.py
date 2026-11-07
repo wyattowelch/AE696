@@ -83,3 +83,21 @@ def find_ideal_events(init, control_config):
         )
 
     return ideals
+
+
+def orbit_event_observations(ideals, event_state, box_shape):
+    """
+    Compare the ideal and current event states, and relate it to the box.
+
+    In:
+        ideals          Dictionary, pos and vel per event
+        event_state     Current state when event hits using linear interpolation
+        box_shape flt,  Used for 3D bounding box. Currently a simple method.
+
+    Out:
+        delta_r_g       difference from ideal to current position
+        delta_v_g       difference from ideal to current velocity
+
+    """
+
+    return

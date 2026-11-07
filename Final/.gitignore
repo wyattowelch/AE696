@@ -8,3 +8,4 @@ src2/
 __pycache__/
 *.csv
 *.png
+*.json

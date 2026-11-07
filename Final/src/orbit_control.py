@@ -11,7 +11,7 @@ import math
 from propagator import propagate
 from scenario import EARTH, RunConfig
 from state import State
-from orbit_bounding import find_ideal_events
+from orbit_bounding import find_ideal_events, orbit_event_observations
 
 
 logger = logging.getLogger(__name__)
@@ -191,6 +191,11 @@ def propagate_with_orbit_control(
             states.append(event_state) # append final if none/if times dont line up
 
         # Compare satellite state vs optimal position, compare it to box.
+        orbit_event_observations(
+            ideals, 
+            event_state, 
+            control_config.box_shape
+            )
 
         # Apply Policy Action
         action_index = _policy_action(control_config, event_name, event_state)
